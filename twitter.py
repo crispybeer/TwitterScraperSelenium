@@ -94,7 +94,7 @@ for ticker, since_, until_, names in req_params[78:81]:
         
         get_source = driver.page_source
         
-        while 'Something went wrong' in get_source:
+        while 'Something went wrong. Try reloading.' in get_source:
             sleep(900)
             driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
             sleep(5)

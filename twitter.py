@@ -16,7 +16,7 @@ from datetime import timedelta
 import time
 
 
-proxy = "195.201.226.34:4000"
+proxy = "205.207.101.161:8282"
 
 chromedriver_path = '/Users/mac/Documents/programming/chromedriver'
 chrome_options = webdriver.ChromeOptions()
@@ -84,14 +84,31 @@ for ticker, since_, until_, names in req_params[78:81]:
     since = '3A' + str(since_)
     
     for name in names:
-
-        driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
         
+        driver.implicitly_wait(20)
+        driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
+
         repeat_counter = 0 # Counter for if the data is not updating anymore (means the end of the page)
         prev_set_len = 0
         scrollDelay = 0.1  # Delay between each scroll
-        driver.implicitly_wait(5)
         
+        error_text_xpath = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div[1]/span'
+        try: 
+            error_text = driver.find_element(By.XPATH, error_text_xpath).text
+        
+        except:
+            error_text = ''
+        
+        while 'Something went wrong. Try reloading.' in error_text:
+            driver.implicitly_wait(60*15)
+            driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
+            
+            try: 
+                error_text = driver.find_element(By.XPATH, error_text_xpath).text
+        
+            except:
+                error_text = ''
+            
         try:
             articles = driver.find_elements(By.XPATH,"//article[@data-testid='tweet']") 
         except:

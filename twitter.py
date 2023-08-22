@@ -29,7 +29,7 @@ driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=chromed
 
 driver.get("https://twitter.com/login")
 
-time.sleep(10)
+sleep(10)
 username = driver.find_element(By.XPATH,"//input[@name='text']")
 username.send_keys(login)
 
@@ -85,7 +85,7 @@ for ticker, since_, until_, names in req_params[78:81]:
     
     for name in names:
         
-        driver.implicitly_wait(20)
+        sleep(5)
         driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
 
         repeat_counter = 0 # Counter for if the data is not updating anymore (means the end of the page)
@@ -95,8 +95,9 @@ for ticker, since_, until_, names in req_params[78:81]:
         get_source = driver.page_source
         
         while 'Something went wrong' in get_source:
-            time.sleep(60*15)
+            sleep(900)
             driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
+            sleep(5)
             get_source = driver.page_source
             
         try:

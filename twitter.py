@@ -92,22 +92,12 @@ for ticker, since_, until_, names in req_params[78:81]:
         prev_set_len = 0
         scrollDelay = 0.1  # Delay between each scroll
         
-        error_text_xpath = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div[1]/span'
-        try: 
-            error_text = driver.find_element(By.XPATH, error_text_xpath).text
+        get_source = driver.page_source
         
-        except:
-            error_text = ''
-        
-        while 'Something went wrong. Try reloading.' in error_text:
-            driver.implicitly_wait(60*15)
+        while 'Something went wrong' in get_source:
+            time.sleep(60*15)
             driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
-            
-            try: 
-                error_text = driver.find_element(By.XPATH, error_text_xpath).text
-        
-            except:
-                error_text = ''
+            get_source = driver.page_source
             
         try:
             articles = driver.find_elements(By.XPATH,"//article[@data-testid='tweet']") 

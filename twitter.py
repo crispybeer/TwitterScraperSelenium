@@ -106,7 +106,11 @@ for ticker, since_, until_, names in req_params[78:81]:
             print(f'No tweets for {ticker}, {since_}, {until_}')
             continue
         
-        if len(articles) == 0:
+        if len(articles) == 0 and 'No results for' in driver.page_source:
+            
+            with open('empty.txt', 'a') as fout:
+                fout.write(f'{ticker}_{since_}_{until_}_{name}\n')
+                
             continue
         
         print(articles[0].find_element(By.XPATH,".//div[@data-testid='User-Name']").text)

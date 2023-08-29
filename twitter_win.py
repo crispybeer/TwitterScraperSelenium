@@ -85,6 +85,10 @@ for ticker, since_, until_, names in req_params[78:81]:
     
     for name in names:
         
+        # for i in range(60):
+        #     driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
+        #     driver.implicitly_wait(0.2)
+        
         sleep(5)
         driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
 
@@ -92,26 +96,28 @@ for ticker, since_, until_, names in req_params[78:81]:
         prev_set_len = 0
         scrollDelay = 0.1  # Delay between each scroll
         
-        get_source = driver.page_source
-        
-        while 'Попробуйте перезагрузить страницу.' in get_source:
-            sleep(900)
-            driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
+        time.sleep(20)
+                
+        while 'Попробуйте перезагрузить страницу.' in driver.page_source:
+            print(name, until, since, 'ERROR FOUND. WAIT 30')
+            sleep(30)
+            driver.refresh()
             sleep(5)
-            get_source = driver.page_source
             
+        print('SUCCESS')
         try:
             articles = driver.find_elements(By.XPATH,"//article[@data-testid='tweet']") 
         except:
             print(f'No tweets for {ticker}, {since_}, {until_}')
             continue
         
-        if len(articles) == 0 or 'ничего не найдено' in driver.page_source:
+        if len(articles) == 0:
+            if 'No results for' in driver.page_source:
+                with open('empty.txt', 'a') as fout:
+                    fout.write(f'{ticker}_{since_}_{until_}_{name}\n')
             
-            with open('C:\\Users\\Tima\\Desktop\\Allison_RA\\twitter_parser\\empty.txt', 'a') as fout:
-                fout.write(f'{ticker}_{since_}_{until_}_{name}\n')
-                
             continue
+            
         
         print(articles[0].find_element(By.XPATH,".//div[@data-testid='User-Name']").text)
         

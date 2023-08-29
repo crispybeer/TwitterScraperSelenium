@@ -89,7 +89,6 @@ for ticker, since_, until_, names in req_params[1268:]:
         #     driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
         #     driver.implicitly_wait(0.2)
         
-        
         sleep(5)
         driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
 
@@ -98,14 +97,12 @@ for ticker, since_, until_, names in req_params[1268:]:
         scrollDelay = 0.1  # Delay between each scroll
         
         time.sleep(20)
-        get_source = driver.page_source
         
         while 'Something went wrong' in driver.page_source:
-            print('ERROR FOUND. WAIT 30')
+            print(name, until, since, 'ERROR FOUND. WAIT 30')
             sleep(30)
             driver.refresh()
             sleep(5)
-            get_source = driver.page_source
         
         print('SUCCESS')
         try:

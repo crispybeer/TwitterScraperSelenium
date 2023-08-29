@@ -16,7 +16,7 @@ from datetime import timedelta
 import time
 
 
-proxy = "205.207.101.161:8282"
+proxy = "211.253.36.172:5016"
 
 chromedriver_path = '/Users/mac/Documents/programming/chromedriver'
 chrome_options = webdriver.ChromeOptions()
@@ -77,13 +77,18 @@ with open('left.csv') as fin:
         req_params.append([ticker, begin, end, names])
 
 
-for ticker, since_, until_, names in req_params[78:81]:
+for ticker, since_, until_, names in req_params[1268:]:
     tweets = list()
     t = '24'+ ticker
     until = '3A' + str(until_ + timedelta(days=1))
     since = '3A' + str(since_)
     
     for name in names:
+        
+        # for i in range(60):
+        #     driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
+        #     driver.implicitly_wait(0.2)
+        
         
         sleep(5)
         driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
@@ -92,26 +97,30 @@ for ticker, since_, until_, names in req_params[78:81]:
         prev_set_len = 0
         scrollDelay = 0.1  # Delay between each scroll
         
+        time.sleep(20)
         get_source = driver.page_source
         
-        while 'Something went wrong. Try reloading.' in get_source:
-            sleep(900)
-            driver.get(f'https://twitter.com/search?q={name.replace(" ", "+").replace("&", "%26")}%20until%{until}%20since%{since}%20-filter%3Areplies&src=recent_search_click&f=live')
+        while 'Something went wrong' in driver.page_source:
+            print('ERROR FOUND. WAIT 30')
+            sleep(30)
+            driver.refresh()
             sleep(5)
             get_source = driver.page_source
-            
+        
+        print('SUCCESS')
         try:
             articles = driver.find_elements(By.XPATH,"//article[@data-testid='tweet']") 
         except:
             print(f'No tweets for {ticker}, {since_}, {until_}')
             continue
         
-        if len(articles) == 0 and 'No results for' in driver.page_source:
+        if len(articles) == 0:
+            if 'No results for' in driver.page_source:
+                with open('empty.txt', 'a') as fout:
+                    fout.write(f'{ticker}_{since_}_{until_}_{name}\n')
             
-            with open('empty.txt', 'a') as fout:
-                fout.write(f'{ticker}_{since_}_{until_}_{name}\n')
-                
             continue
+            
         
         print(articles[0].find_element(By.XPATH,".//div[@data-testid='User-Name']").text)
         

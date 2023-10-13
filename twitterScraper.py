@@ -3,12 +3,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from time import sleep
 
-from login_info import login, psw
-
-from datetime import datetime
-from datetime import timedelta
 import time
 import platform
 from fake_useragent import UserAgent
@@ -18,8 +15,7 @@ class Scraper:
     def __init__(self, chromedriver_path: str, user_agent: str = ua.chrome, manual_delay: int = 60) -> None:
         self.user_agent = user_agent
         self.scraped_data = list()
-        self.chromedriver_path = chromedriver_path
-        
+        self.service = Service(executable_path=chromedriver_path)
         
         self._login(manual_delay)
         self.driver = self._create_driver()
@@ -37,7 +33,7 @@ class Scraper:
             raise Exception("Unsupported operating system")
         
         chrome_options.add_argument(f'user-agent={self.user_agent}')
-        driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=self.chromedriver_path)
+        driver = webdriver.Chrome(options=chrome_options, service=self.service)
         return driver
         
     def _login(self, manual_delay: int, ) -> None:
@@ -54,9 +50,6 @@ class Scraper:
                         + '&src=recent_search_click'
                         + '&f=live'*recent)
         
-        
-        repeat_counter = 0 # Counter for if the data is not updating anymore (means the end of the page)
-        prev_set_len = 0
         scrollDelay = 0.1  # Delay between each scroll
         
         time.sleep(20)

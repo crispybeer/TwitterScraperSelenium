@@ -3,5 +3,6 @@
 
 # But not these files...
 !.gitignore
+!requirements.txt
 !twitterScraper.py
 # etc...

@@ -3,6 +3,5 @@
 
 # But not these files...
 !.gitignore
-!twitter.py
-!twitter_win.py
+!twitterScraper.py
 # etc...

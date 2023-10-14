@@ -15,28 +15,29 @@ class Scraper:
     def __init__(self, chromedriver_path: str, user_agent: str = ua.chrome, manual_delay: int = 60) -> None:
         self.user_agent = user_agent
         self.scraped_data = list()
-        self.service = Service(executable_path=chromedriver_path)
+        self.chromedriver_path = chromedriver_path
         
         self._login(manual_delay)
         self.driver = self._create_driver()
         
     def _create_driver(self, headless:bool = False) -> webdriver.Chrome:
         chrome_options = webdriver.ChromeOptions()
+        service = Service(executable_path=self.chromedriver_path)
         if headless: chrome_options.add_argument('--headless')
         
         system = platform.system()
         if system == "Windows":
             chrome_options.add_argument(r'user-data-dir=C:\Users\%USERNAME%\AppData\Local\Google\Chrome\User Data\Default')
         elif system == "Darwin":
-            chrome_options.add_argument('user-data-dir=~/Library/Application Support/Google/Chrome/Default')
+            chrome_options.add_argument('user-data-dir=./Library/Application Support/Google/Chrome/Default')
         else:
             raise Exception("Unsupported operating system")
         
         chrome_options.add_argument(f'user-agent={self.user_agent}')
-        driver = webdriver.Chrome(options=chrome_options, service=self.service)
+        driver = webdriver.Chrome(options=chrome_options, service=service)
         return driver
         
-    def _login(self, manual_delay: int, ) -> None:
+    def _login(self, manual_delay: int) -> None:
         temp_driver = self._create_driver()
         temp_driver.get("https://twitter.com/login")
         time.sleep(manual_delay)
@@ -123,9 +124,3 @@ class Scraper:
         self.scraped_data+=tweets
         self.scraped_data = [dict(t) for t in {tuple(d.items()) for d in self.scraped_data}]
         return tweets
-
-if __name__ == "__main__":
-    scraper = Scraper(chromedriver_path='/Users/mac/Documents/programming/chromedriver', manual_delay=30)
-    print(scraper.scrape_request('tasty%20pork', '2010-03-01', '2010-03-03'))
-    print(scraper.scrape_request('tasty%20sushi', '2010-03-01', '2010-03-03'))
-    print(scraper.scraped_data)

@@ -5,4 +5,5 @@
 !.gitignore
 !requirements.txt
 !twitterScraper.py
+!test.py
 # etc...

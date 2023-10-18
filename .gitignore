@@ -1,9 +1,12 @@
-# Ignore everything
-*
-
-# But not these files...
-!.gitignore
-!requirements.txt
-!twitterScraper.py
-!test.py
-# etc...
+__pycache__
+.ipynb_checkpoints
+.vscode
+empty.txt
+dates
+Library
+venv
+twitter_accounts.xlsx
+nitter_full_names.py 
+login_info.py 
+.DS_Store
+.gitignore.swp

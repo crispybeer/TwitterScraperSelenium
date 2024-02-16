@@ -1,4 +1,4 @@
-from src.twitterScraper import Scraper
+from twitterScraper import Scraper
 
 if __name__ == "__main__":
     scraper = Scraper(chromedriver_path='/Users/mac/Documents/programming/chromedriver', manual_delay=30)

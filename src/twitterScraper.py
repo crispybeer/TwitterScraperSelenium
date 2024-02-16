@@ -124,3 +124,7 @@ class Scraper:
         self.scraped_data+=tweets
         self.scraped_data = [dict(t) for t in {tuple(d.items()) for d in self.scraped_data}]
         return tweets
+
+    def clean_buffer(self) -> None:
+        self.scraped_data.clear()
+        
